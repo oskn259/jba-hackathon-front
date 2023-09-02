@@ -51,6 +51,7 @@ const Home: NextPage = () => {
 
   return (
     <main>
+      <p>Contract Address: {process.env.NEXT_PUBLIC_JGKSHOUGI_CONTRACT_ADDR}</p>
       <ProposeGameButton isDisabled={!!boardId.value} proposeGame={propose} />
       <AcceptGameButton isDisabled={!!boardId.value} acceptGame={accept} />
       <Button colorScheme='blue' onClick={onReset}>リセット</Button>
