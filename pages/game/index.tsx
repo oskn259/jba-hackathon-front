@@ -60,11 +60,7 @@ const GamePage: NextPage = () => {
     return isHostString.value === 'true' ? getBoard.data.challengerArmy.soldiers : getBoard.data.hostArmy.soldiers;
   }, [getBoard.data, isHostString.value]);
 
-  const [selectedCell, setSelectedCell] = useState<{ x: number, y: number } | null>(null);
-  const selectedSoldier = useMemo(() => {
-    if (!selectedCell || !ally || !enemy) return null;
-    return ally.find(s => (s.x - 1) === selectedCell.x && (s.y - 1) === selectedCell.y);
-  }, [ally, selectedCell]);
+  const [selectedSoldier, setSelectedSoldier] = useState<{ id: string, x: number, y: number } | null>(null);
 
   const boardMatrix = useMemo(() => {
     if (!getBoard.data) return null;
@@ -117,7 +113,8 @@ const GamePage: NextPage = () => {
 
     if (soldier.party !== turn) return;
 
-    setSelectedCell({ x, y });
+    const s = ally.find(s => (s.x - 1) === x && (s.y - 1) === y);
+    setSelectedSoldier(s);
   }, [boardMatrix, getBoard.data, isHostString.value]);
 
   const onClickMove = useCallback(async (soldierId: string, x: number, y: number) => {
@@ -143,7 +140,7 @@ const GamePage: NextPage = () => {
     return categoryGraphic[soldier.category];
   }
 
-  const isSelected = (x: number, y: number) => !!selectedCell && selectedCell.x === x && selectedCell.y === y;
+  const isSelected = (x: number, y: number) => !!selectedSoldier && selectedSoldier.x === (x + 1) && selectedSoldier.y === (y + 1);
   return (
     <main>
       <Center>
@@ -204,7 +201,7 @@ const GamePage: NextPage = () => {
             </GridItem>
           </Grid>
 
-          <SoldierMoveForm soldierId={selectedSoldier?.id} onClick={onClickMove} />
+          <SoldierMoveForm soldierId={selectedSoldier?.id ?? null} onClick={onClickMove} />
           <ClaimRewardButton boardId={boardId.value} claimLoot={onClaimLoots} />
         </VStack>
       </Center>
