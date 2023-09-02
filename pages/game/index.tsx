@@ -78,27 +78,31 @@ const GamePage: NextPage = () => {
       [clone(empty), clone(empty), clone(empty), clone(empty)],
     ];
 
-    ally.forEach(soldier => {
-      const category = categoryMap[soldier.category];
-      matrix[soldier.x - 1][soldier.y - 1] = {
-        soldier: {
-          id: soldier.id,
-          category,
-          party: isHostString.value === 'true' ? 'host' : 'challenger',
-        }
-      };
-    });
+    ally
+      .filter(soldier => soldier.status === 0)
+      .forEach(soldier => {
+        const category = categoryMap[soldier.category];
+        matrix[soldier.x - 1][soldier.y - 1] = {
+          soldier: {
+            id: soldier.id,
+            category,
+            party: isHostString.value === 'true' ? 'host' : 'challenger',
+          }
+        };
+      });
 
-    enemy.forEach(soldier => {
-      const category = categoryMap[soldier.category];
-      matrix[soldier.x - 1][soldier.y - 1] = {
-        soldier: {
-          id: soldier.id,
-          category,
-          party: isHostString.value === 'true' ? 'challenger' : 'host',
-        }
-      };
-    });
+    enemy
+      .filter(soldier => soldier.status === 0)
+      .forEach(soldier => {
+        const category = categoryMap[soldier.category];
+        matrix[soldier.x - 1][soldier.y - 1] = {
+          soldier: {
+            id: soldier.id,
+            category,
+            party: isHostString.value === 'true' ? 'challenger' : 'host',
+          }
+        };
+      });
 
     return matrix;
   }, [getBoard.data]);
@@ -137,7 +141,6 @@ const GamePage: NextPage = () => {
   }
 
   const isSelected = (x: number, y: number) => !!selectedCell && selectedCell.x === x && selectedCell.y === y;
-
   return (
     <main>
       <Center>
@@ -146,6 +149,8 @@ const GamePage: NextPage = () => {
             <p>対戦ID：{boardId.value}</p>
             <p>Your role：{isHostString.value === 'true' ? 'Host' : 'Challenger'}</p>
             <p>Turn：{getBoard.data.turn === 1 ? 'Challenger' : 'Host'}</p>
+            <p>Bounty：{getBoard.data.stakeAmount.toNumber()}</p>
+            {getBoard.data.status === 2 && <p>Game finished</p>}
           </VStack>
 
           <Grid
