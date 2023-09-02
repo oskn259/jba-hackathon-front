@@ -121,7 +121,10 @@ const GamePage: NextPage = () => {
   }, [boardMatrix, getBoard.data, isHostString.value]);
 
   const onClickMove = useCallback(async (soldierId: string, x: number, y: number) => {
-    await moveSoldier.mutateAsync({ args: [boardId.value, soldierId, x, y] });
+    await moveSoldier.mutateAsync({
+      args: [boardId.value, soldierId, x, y],
+      overrides: { value: Math.ceil(getBoard.data.bounty * 0.005) }
+    });
   }, [moveSoldier, boardId.value]);
 
   const onClaimLoots = useCallback(async (boardId: BigNumber) => {
